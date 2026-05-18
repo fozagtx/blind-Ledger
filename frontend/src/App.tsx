@@ -12,6 +12,8 @@ import {
   AddMemberPanel,
   AutomationPanel,
   ClaimPanel,
+  ActivityPanelAdmin,
+  ActivityPanelPayee,
 } from "./components/DashboardPanels";
 import { useIsRole } from "./hooks/usePayrollPool";
 import { useFHE } from "./hooks/useFHE";
@@ -57,7 +59,7 @@ function NetworkGate({ children }: { children: React.ReactNode }) {
 }
 
 // Pick the right panel for an id.
-function renderPanel(id: string) {
+function renderPanel(id: string, role: "Admin" | "Recipient") {
   switch (id) {
     case "overview":   return <OverviewPanel />;
     case "funds":      return <FundsPanel />;
@@ -66,6 +68,7 @@ function renderPanel(id: string) {
     case "add-member": return <AddMemberPanel />;
     case "automation": return <AutomationPanel />;
     case "claim":      return <ClaimPanel />;
+    case "activity":   return role === "Admin" ? <ActivityPanelAdmin /> : <ActivityPanelPayee />;
     default:           return <OverviewPanel />;
   }
 }
@@ -102,7 +105,7 @@ function Dashboard({ items, role }: { items: NavItem[]; role: "Admin" | "Recipie
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             >
-              {renderPanel(active)}
+              {renderPanel(active, role)}
             </motion.div>
           </AnimatePresence>
         </div>

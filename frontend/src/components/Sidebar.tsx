@@ -1,5 +1,6 @@
 import { useAccount, useDisconnect } from "wagmi";
 import {
+  Activity,
   Banknote,
   Bot,
   Clock,
@@ -95,9 +96,11 @@ export const ADMIN_NAV: NavItem[] = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "schedule", label: "Schedule", icon: Clock },
   { id: "add-member", label: "Add member", icon: UserPlus },
+  { id: "activity", label: "Activity", icon: Activity },
 ];
 
 export const PAYEE_NAV: NavItem[] = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "claim", label: "Get paid", icon: Unlock },
+  { id: "activity", label: "My activity", icon: Activity },
 ];

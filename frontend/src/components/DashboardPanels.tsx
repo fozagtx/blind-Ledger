@@ -7,6 +7,7 @@ import { PayeeListAdmin } from "./PayeeListAdmin";
 import { AddPayeeCard } from "./AddPayeeCard";
 import { KeeperCard } from "./KeeperCard";
 import { ClaimCard } from "./ClaimCard";
+import { HistoryPanelAdmin, HistoryPanelPayee } from "./HistoryPanel";
 
 const fadeUp = {
   initial: { opacity: 0, y: 8 },
@@ -96,6 +97,30 @@ export function ClaimPanel() {
         sub="Open your sealed pay packet for this cycle. One click triggers the unseal + transfer."
       />
       <ClaimCard />
+    </Panel>
+  );
+}
+
+export function ActivityPanelAdmin() {
+  return (
+    <Panel>
+      <PanelHeader
+        title="Activity"
+        sub="Every action on the contract, from deposits to claims to schedule changes. All on-chain, all linkable."
+      />
+      <HistoryPanelAdmin />
+    </Panel>
+  );
+}
+
+export function ActivityPanelPayee() {
+  return (
+    <Panel>
+      <PanelHeader
+        title="My activity"
+        sub="Every claim you've made on this contract. Pulled directly from on-chain event logs."
+      />
+      <HistoryPanelPayee />
     </Panel>
   );
 }
