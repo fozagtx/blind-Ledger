@@ -8,6 +8,12 @@ export default defineConfig({
   define: {
     global: "globalThis",
   },
+  worker: {
+    // tfhe@1.5.x uses wasm-bindgen-rayon for parallelism — its bundled worker
+    // script is in IIFE format which clashes with Rollup code-splitting.
+    // Forcing ES module workers makes Rollup happy.
+    format: "es",
+  },
   optimizeDeps: {
     // cofhejs ships tfhe wasm — let Vite handle it through the wasm plugin
     // rather than pre-bundling.
@@ -18,5 +24,14 @@ export default defineConfig({
   },
   build: {
     target: "es2020",
+    rollupOptions: {
+      output: {
+        // Keep rollup from inlining the tfhe worker into a single chunk.
+        manualChunks(id) {
+          if (id.includes("node_modules/.pnpm/tfhe@")) return "tfhe";
+          if (id.includes("node_modules/.pnpm/cofhejs@")) return "cofhejs";
+        },
+      },
+    },
   },
 });
