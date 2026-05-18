@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ease-vault: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* Brand tokens (mirrors tailwind.config.js for raw CSS use) */
+  --navy: #002259;
+  --blue-primary: #2670DC;
+  --blue-deep: #0042AB;
+  --blue-sky: #79ADF8;
+  --blue-pale: #BDD7FF;
+  --blue-mist: #E9F3FF;
+  --success-green: #0DDE53;
+  --skeleton: #EFF4F9;
+}
+
+html, body, #root {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Instrument Sans Variable", "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  color: var(--navy);
+  letter-spacing: -0.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Sky atmosphere — content floats over it */
+  background-image: linear-gradient(#BDD7FF 0%, #FFFFFF 39.45%);
+  background-attachment: fixed;
+}
+
+/* Display utilities */
+.display-tight {
+  letter-spacing: -0.025em;
+}
+.display-refined {
+  letter-spacing: -0.5px;
+}
+
+.label-eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--blue-primary);
+  font-weight: 600;
+}
+
+/* Serif flavor — used sparingly on hero callouts */
+.serif {
+  font-family: "Instrument Serif", ui-serif, Georgia, serif;
+  font-style: italic;
+}
+
+/* The encrypted-data card — neumorphic frosted glass with monospace.
+   Replaces the dark "cipher-blob" shimmer from the previous theme. */
+.cipher-card {
+  background-color: var(--skeleton);
+  background-image: linear-gradient(135deg, rgba(189,215,255,0.25), rgba(255,255,255,0.45));
+  backdrop-filter: blur(12px);
+  box-shadow:
+    rgba(255,255,255,0.85) -4px -4px 8px 0 inset,
+    rgba(189,215,255,0.45) 4px 4px 8px 0 inset;
+  position: relative;
+  overflow: hidden;
+}
+.cipher-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: cipher-sheen 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes cipher-sheen {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -100% 0; }
+}
+
+/* Neumorphic card — the foundational surface */
+.neumo-card {
+  background-color: var(--skeleton);
+  box-shadow:
+    rgba(255,255,255,0.75) -4px -4px 6px 0 inset,
+    rgba(255,255,255,0.75) 4px 4px 6px 0 inset;
+  border: 1px solid rgba(189,215,255,0.3);
+}
+
+/* Frosted glass surface — for search, inputs, overlays */
+.frost {
+  background-color: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(189,215,255,0.3);
+  box-shadow:
+    rgba(235,243,255,0.75) -2px -2px 4px 0 inset,
+    rgba(235,243,255,0.75) 2px 2px 4px 0 inset;
+}
+
+/* Primary CTA. Disabled state is deliberately a different SHAPE (flat grey, no
+   glow) so the disabled → active transition is impossible to miss. */
+.btn-cta {
+  background-image: linear-gradient(#0044B9 5.5%, #0074EC 35%, #4EB1FF 65%, #ADD9FF 95%);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 8px 24px -8px rgba(38,112,220,0.4);
+  cursor: pointer;
+  transition:
+    transform 0.12s var(--ease-vault),
+    filter 0.15s var(--ease-vault),
+    box-shadow 0.2s var(--ease-vault),
+    background 0.2s var(--ease-vault),
+    color 0.2s var(--ease-vault);
+}
+.btn-cta:hover:not(:disabled) {
+  filter: brightness(1.07);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px -8px rgba(38,112,220,0.5);
+}
+.btn-cta:active:not(:disabled) {
+  transform: translateY(0) scale(0.985);
+  filter: brightness(0.98);
+}
+.btn-cta:focus-visible {
+  outline: 2px solid var(--blue-primary);
+  outline-offset: 2px;
+}
+.btn-cta:disabled {
+  background-image: none;
+  background-color: #EDEEF1;          /* neutral grey, no blue tint */
+  color: #9CA3AF;
+  border-color: transparent;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+/* When a CTA flips from disabled to enabled, a brief glow draws the eye. */
+.btn-cta:not(:disabled) {
+  animation: cta-armed 0.6s var(--ease-vault);
+}
+@keyframes cta-armed {
+  0%   { box-shadow: 0 0 0 0 rgba(38,112,220,0.45); }
+  60%  { box-shadow: 0 0 0 8px rgba(38,112,220,0); }
+  100% { box-shadow: 0 8px 24px -8px rgba(38,112,220,0.4); }
+}
+
+/* Quiet secondary, white with whisper-thin navy border */
+.btn-ghost {
+  background-color: #fff;
+  border: 1px solid rgba(0,37,97,0.08);
+  color: var(--blue-primary);
+  cursor: pointer;
+  transition:
+    transform 0.12s var(--ease-vault),
+    background-color 0.15s var(--ease-vault),
+    border-color 0.15s var(--ease-vault),
+    color 0.15s var(--ease-vault);
+}
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--blue-mist);
+  border-color: rgba(38,112,220,0.25);
+}
+.btn-ghost:active:not(:disabled) {
+  transform: scale(0.985);
+}
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--blue-primary);
+  outline-offset: 2px;
+}
+.btn-ghost:disabled {
+  background-color: #F3F4F6;
+  color: #9CA3AF;
+  border-color: transparent;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Solid form inputs — no more whisper-borders on input fields.
+   .frost is preserved for chrome (search/nav pills) where transparency reads as
+   "embedded in the surface". Form inputs need defined edges so users can tell
+   where to type. */
+.input-solid {
+  background-color: #FFFFFF;
+  border: 1px solid #D1D9E6;
+  color: var(--navy);
+  transition:
+    border-color 0.15s var(--ease-vault),
+    box-shadow 0.15s var(--ease-vault),
+    background-color 0.15s var(--ease-vault);
+}
+.input-solid:hover {
+  border-color: #BDD7FF;
+}
+.input-solid:focus,
+.input-solid:focus-visible {
+  outline: none;
+  border-color: var(--blue-primary);
+  box-shadow: 0 0 0 3px rgba(38,112,220,0.15);
+}
+.input-solid::placeholder {
+  color: #8F9FB8;
+}
+
+/* Soft decorative orb (background flourish) */
+.orb {
+  background-image: radial-gradient(circle, rgba(121,173,248,0.22) 0%, rgba(189,215,255,0.14) 50%, rgba(255,255,255,0) 80%);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+/* Reusable transition shorthand */
+.t-vault {
+  transition-property: background-color, border-color, color, box-shadow, transform, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: var(--ease-vault);
+}
+
+/* Trust marquee */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: inline-flex;
+  animation: marquee 38s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
