@@ -8,7 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "postinstall": "bash ../scripts/patch-cofhejs.sh ."
+    "postinstall": "bash ./scripts/patch-cofhejs.sh ."
   },
   "dependencies": {
     "@fontsource-variable/instrument-sans": "^5.2.8",
