@@ -9,7 +9,9 @@
     "clean": "hardhat clean",
     "bridge": "ts-node --transpile-only scripts/bridge.ts",
     "bridge:status": "ts-node --transpile-only scripts/bridge-status.ts",
-    "verify:cron": "ts-node --transpile-only scripts/verify-cron.ts"
+    "verify:cron": "ts-node --transpile-only scripts/verify-cron.ts",
+    "add:payee": "ts-node --transpile-only scripts/add-payee.ts",
+    "postinstall": "bash ../scripts/patch-cofhejs.sh ."
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
@@ -22,6 +24,13 @@
   "dependencies": {
     "@fhenixprotocol/cofhe-contracts": "^0.1.0",
     "@openzeppelin/contracts": "^5.0.2",
+    "cofhejs": "^0.3.1",
     "viem": "^2.49.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "tfhe": "1.5.4",
+      "node-tfhe": "1.5.4"
+    }
   }
 }
