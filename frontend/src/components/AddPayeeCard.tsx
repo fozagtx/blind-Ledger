@@ -107,12 +107,28 @@ export function AddPayeeCard() {
           {step === "encrypting" ? "Sealing pay…"
             : step === "submitting" ? "Adding…"
             : step === "confirming" ? "Almost done…"
+            : fhe.state === "error" ? "Encryption engine offline"
             : !fhe.ready ? "Warming up…"
             : !validAddr ? "Enter a valid wallet"
             : !parsed ? "Enter a salary"
             : "Seal and add"}
         </button>
+        {fhe.state === "error" ? (
+          <button
+            type="button"
+            onClick={fhe.retry}
+            className="text-xs font-semibold text-blue-700 hover:text-blue-900 underline t-vault"
+          >
+            Retry init
+          </button>
+        ) : null}
       </div>
+
+      {fhe.state === "error" && fhe.error ? (
+        <div className="mt-3 text-xs text-red-500 break-all">
+          Couldn't start the encryption engine: {fhe.error}
+        </div>
+      ) : null}
 
       {step === "confirming" && txHash ? (
         <div className="mt-3 text-xs text-neutral-700 inline-flex items-center gap-1.5">
