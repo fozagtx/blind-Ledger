@@ -1,7 +1,7 @@
 import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { Lock, Loader2, Trash2 } from "lucide-react";
 import type { Address } from "viem";
-import { config } from "../lib/config";
+import { config, gasOverride } from "../lib/config";
 import { payrollPoolAbi } from "../lib/abi";
 import { cipherPreview, shortAddr } from "../lib/format";
 import { usePayeeList } from "../hooks/usePayrollPool";
@@ -34,6 +34,7 @@ function PayeeRow({ addr }: { addr: Address }) {
         abi: payrollPoolAbi,
         functionName: "removePayee",
         args: [addr],
+        ...gasOverride,
       });
     } catch { /* surfaced */ }
   }

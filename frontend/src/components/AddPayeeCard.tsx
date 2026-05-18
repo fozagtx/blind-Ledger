@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { isAddress, type Address } from "viem";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { Lock, Loader2, CheckCircle2 } from "lucide-react";
-import { config } from "../lib/config";
+import { config, gasOverride } from "../lib/config";
 import { payrollPoolAbi } from "../lib/abi";
 import { parseUsdc } from "../lib/format";
 import { encryptUint128 } from "../lib/fhe";
 import { useFHE } from "../hooks/useFHE";
 import { UsdcLogo } from "./Logos";
+import { TxLink } from "./TxLink";
 
 type Step = "idle" | "encrypting" | "submitting" | "confirming" | "done" | "error";
 
@@ -42,6 +43,7 @@ export function AddPayeeCard() {
         abi: payrollPoolAbi,
         functionName: "addPayee",
         args: [addr as Address, enc as any],
+        ...gasOverride,
       });
       setTxHash(hash);
       setStep("confirming");
@@ -112,9 +114,15 @@ export function AddPayeeCard() {
         </button>
       </div>
 
-      {step === "done" ? (
-        <div className="mt-3 text-xs text-success inline-flex items-center gap-1 font-semibold">
-          <CheckCircle2 className="h-3 w-3" /> Added, their pay is sealed and on the schedule
+      {step === "confirming" && txHash ? (
+        <div className="mt-3 text-xs text-neutral-700 inline-flex items-center gap-1.5">
+          <Loader2 className="h-3 w-3 animate-spin text-blue-700" />
+          Sealing on-chain · <TxLink hash={txHash} />
+        </div>
+      ) : null}
+      {step === "done" && write.data ? (
+        <div className="mt-3 text-xs text-success inline-flex items-center gap-1.5 font-semibold">
+          <CheckCircle2 className="h-3 w-3" /> Added, their pay is sealed · <TxLink hash={write.data} />
         </div>
       ) : null}
       {err ? <div className="mt-3 text-xs text-red-500 break-all">{err}</div> : null}

@@ -95,7 +95,6 @@ export const ADMIN_NAV: NavItem[] = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "schedule", label: "Schedule", icon: Clock },
   { id: "add-member", label: "Add member", icon: UserPlus },
-  { id: "automation", label: "Automation", icon: Bot },
 ];
 
 export const PAYEE_NAV: NavItem[] = [

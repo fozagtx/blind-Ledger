@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { CheckCircle2, Eye, Loader2, Lock, Unlock } from "lucide-react";
-import { config } from "../lib/config";
+import { config, gasOverride } from "../lib/config";
 import { payrollPoolAbi } from "../lib/abi";
 import { cipherPreview, fmtUsdc } from "../lib/format";
 import { unsealUint128 } from "../lib/fhe";
 import { useFHE } from "../hooks/useFHE";
 import { usePayeeEncryptedAmount, usePayeeStatus } from "../hooks/usePayrollPool";
+import { TxLink } from "./TxLink";
 
 type Step =
   | "idle"
@@ -70,6 +71,7 @@ export function ClaimCard() {
           address: config.payrollPool,
           abi: payrollPoolAbi,
           functionName: "finalizeClaim",
+          ...gasOverride,
         });
         setStep("waitingFinalize");
       } catch (e: any) {
@@ -108,6 +110,7 @@ export function ClaimCard() {
           address: config.payrollPool,
           abi: payrollPoolAbi,
           functionName: "requestClaim",
+          ...gasOverride,
         });
         setStep("waitingRequest");
       } else {
@@ -164,9 +167,14 @@ export function ClaimCard() {
           </div>
         ) : null}
         {claimedAmount !== null ? (
-          <div className="mt-3 text-success text-base inline-flex items-center gap-1.5 font-semibold">
-            <Unlock className="h-4 w-4" />
-            Paid · <span className="tabular-nums font-semibold font-mono">{fmtUsdc(claimedAmount)} USDC</span>
+          <div className="mt-3 flex flex-col gap-1">
+            <div className="text-success text-base inline-flex items-center gap-1.5 font-semibold">
+              <Unlock className="h-4 w-4" />
+              Paid · <span className="tabular-nums font-semibold font-mono">{fmtUsdc(claimedAmount)} USDC</span>
+            </div>
+            <div className="text-[11px] text-neutral-700 inline-flex items-center gap-1.5">
+              request <TxLink hash={reqTx.data} /> · finalize <TxLink hash={finTx.data} />
+            </div>
           </div>
         ) : null}
       </div>

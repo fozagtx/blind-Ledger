@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { FastForward, Loader2 } from "lucide-react";
-import { config } from "../lib/config";
+import { CheckCircle2, FastForward, Loader2 } from "lucide-react";
+import { config, gasOverride } from "../lib/config";
 import { payrollPoolAbi } from "../lib/abi";
 import { usePoolOverview } from "../hooks/usePayrollPool";
+import { TxLink } from "./TxLink";
 
 function fmtSecs(secs: number): string {
   if (secs <= 0) return "ready now";
@@ -49,6 +50,7 @@ export function PeriodCard() {
         address: config.payrollPool,
         abi: payrollPoolAbi,
         functionName: "advancePeriod",
+        ...gasOverride,
       });
     } catch {
       /* surfaced via advance.error */
@@ -95,6 +97,17 @@ export function PeriodCard() {
           )}
           Run payday now
         </button>
+      ) : null}
+      {(advance.isPending || wait.isLoading) && advance.data ? (
+        <div className="mt-2 text-xs text-neutral-700 inline-flex items-center gap-1.5">
+          <Loader2 className="h-3 w-3 animate-spin text-blue-700" />
+          Advancing · <TxLink hash={advance.data} />
+        </div>
+      ) : null}
+      {wait.isSuccess ? (
+        <div className="mt-2 text-xs text-success inline-flex items-center gap-1.5 font-semibold">
+          <CheckCircle2 className="h-3 w-3" /> New cycle started · <TxLink hash={advance.data} />
+        </div>
       ) : null}
       {advance.error ? (
         <div className="mt-2 text-xs text-red-500 break-all">{(advance.error as any)?.shortMessage ?? advance.error.message}</div>

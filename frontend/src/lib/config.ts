@@ -22,3 +22,13 @@ export const config = {
 };
 
 export const isConfigured = poolAddr !== undefined && poolAddr !== "0x0000000000000000000000000000000000000000";
+
+// Arb Sepolia base fees are tiny (microgwei) but volatile — MetaMask's gas oracle
+// caches stale predictions and frequently sends a maxFeePerGas just below the
+// next block's base fee, which reverts with "max fee per gas less than block base fee".
+// We pin an explicit, generous cap. You only actually pay (current base fee × gas used);
+// the cap is just an upper bound the wallet must respect.
+export const gasOverride = {
+  maxFeePerGas: 500_000_000n,        // 0.5 gwei — 25x typical Arb Sepolia base
+  maxPriorityFeePerGas: 0n,          // no priority tip needed on this chain
+} as const;

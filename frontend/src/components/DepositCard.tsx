@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ArrowDownToLine, CheckCircle2, Loader2 } from "lucide-react";
-import { config } from "../lib/config";
+import { config, gasOverride } from "../lib/config";
 import { erc20Abi, payrollPoolAbi } from "../lib/abi";
 import { fmtUsdc, parseUsdc } from "../lib/format";
 import { useUsdcAllowance, useUsdcBalance } from "../hooks/usePayrollPool";
 import { UsdcLogo } from "./Logos";
+import { TxLink } from "./TxLink";
 
 export function DepositCard() {
   const { address } = useAccount();
@@ -34,6 +35,7 @@ export function DepositCard() {
         abi: erc20Abi,
         functionName: "approve",
         args: [config.payrollPool, parsed],
+        ...gasOverride,
       });
     } catch (e: any) { setErr(e?.shortMessage ?? e?.message ?? String(e)); }
   }
@@ -47,6 +49,7 @@ export function DepositCard() {
         abi: payrollPoolAbi,
         functionName: "depositFunds",
         args: [parsed],
+        ...gasOverride,
       });
       setAmount("");
     } catch (e: any) { setErr(e?.shortMessage ?? e?.message ?? String(e)); }
@@ -116,12 +119,33 @@ export function DepositCard() {
         </div>
       ) : null}
       {insufficient ? <div className="mt-2 text-xs text-red-500 font-semibold">Not enough USDC in your wallet</div> : null}
-      {depositWait.isSuccess ? (
-        <div className="mt-2 text-xs text-success inline-flex items-center gap-1 font-semibold">
-          <CheckCircle2 className="h-3 w-3" /> Funds added to the pool
+
+      {/* Pending tx (either approve or deposit) */}
+      {(approve.isPending || approveWait.isLoading) && approve.data ? (
+        <div className="mt-3 text-xs text-neutral-700 inline-flex items-center gap-1.5">
+          <Loader2 className="h-3 w-3 animate-spin text-blue-700" />
+          Confirming approval · <TxLink hash={approve.data} />
         </div>
       ) : null}
-      {err ? <div className="mt-2 text-xs text-red-500 break-all">{err}</div> : null}
+      {(deposit.isPending || depositWait.isLoading) && deposit.data ? (
+        <div className="mt-3 text-xs text-neutral-700 inline-flex items-center gap-1.5">
+          <Loader2 className="h-3 w-3 animate-spin text-blue-700" />
+          Confirming deposit · <TxLink hash={deposit.data} />
+        </div>
+      ) : null}
+
+      {/* Success states */}
+      {approveWait.isSuccess && !needsApproval ? (
+        <div className="mt-3 text-xs text-success inline-flex items-center gap-1.5 font-semibold">
+          <CheckCircle2 className="h-3 w-3" /> Approved · <TxLink hash={approve.data} />
+        </div>
+      ) : null}
+      {depositWait.isSuccess ? (
+        <div className="mt-3 text-xs text-success inline-flex items-center gap-1.5 font-semibold">
+          <CheckCircle2 className="h-3 w-3" /> Funds added to the pool · <TxLink hash={deposit.data} />
+        </div>
+      ) : null}
+      {err ? <div className="mt-3 text-xs text-red-500 break-all">{err}</div> : null}
     </div>
   );
 }

@@ -12,7 +12,7 @@ function fmtCountdown(secs: number): string {
   return `${m}m`;
 }
 
-function KV({
+function Stat({
   label,
   value,
   sub,
@@ -24,9 +24,13 @@ function KV({
   highlight?: boolean;
 }) {
   return (
-    <div className="py-4 first:pt-0 last:pb-0">
+    <div>
       <div className="label-eyebrow">{label}</div>
-      <div className={`mt-1.5 text-xl tabular-nums display-tight font-semibold ${highlight ? "text-success" : "text-navy"}`}>
+      <div
+        className={`mt-1 text-lg tabular-nums display-tight font-semibold ${
+          highlight ? "text-success" : "text-navy"
+        }`}
+      >
         {value}
       </div>
       {sub ? <div className="text-[11px] text-neutral-700 mt-0.5">{sub}</div> : null}
@@ -42,40 +46,48 @@ export function PublicView() {
   const ready = next > 0 && remaining <= 0;
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-12 rounded-2xl overflow-hidden border border-blue-300/40 bg-white/50">
-      {/* Hero: total sealed pay */}
-      <div className="md:col-span-8 cipher-card p-8 md:p-10 flex flex-col justify-between min-h-[220px]">
-        <div className="flex items-center gap-2 label-eyebrow">
-          <Lock className="h-3 w-3 text-blue-700" /> Total payroll · sealed
-        </div>
-        <div>
-          <div className="font-mono text-4xl md:text-[44px] leading-none text-navy break-all display-tight">
+    <section className="rounded-2xl border border-blue-300/40 bg-white/60 overflow-hidden">
+      {/* Cipher header — compact, inline label + handle, live pill on the right */}
+      <div className="cipher-card px-6 py-5 flex flex-wrap items-center justify-between gap-3 border-b border-blue-300/40">
+        <div className="min-w-0 flex-1">
+          <div className="label-eyebrow flex items-center gap-1.5 mb-1.5">
+            <Lock className="h-3 w-3 text-blue-700" /> Total payroll · sealed
+          </div>
+          <div className="font-mono text-xl md:text-2xl leading-none text-navy break-all display-tight">
             {cipherPreview(o.aggregateHandle)}
           </div>
-          <div className="mt-3 text-xs text-neutral-800 max-w-md">
-            The sum of every salary, locked. Only the admin can peek at the total, but anyone can verify the math is right.
-          </div>
         </div>
+        <span className="text-[10px] text-neutral-700 px-2 py-0.5 rounded-full bg-white/80 font-semibold inline-flex items-center gap-1 shrink-0">
+          <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+          live
+        </span>
       </div>
 
-      {/* Siblings */}
-      <div className="md:col-span-4 bg-white px-6 md:px-7 py-2 divide-y divide-blue-300/40 border-l border-blue-300/40">
-        <KV
-          label="Available"
-          value={<>{fmtUsdc(o.remainingBalance)} <span className="text-base text-neutral-700 font-normal">USDC</span></>}
-          sub="Anyone can see this. By design."
-        />
-        <KV
-          label="People paid"
-          value={o.payeeCount?.toString() ?? "—"}
-          sub="Wallets only, no names"
-        />
-        <KV
-          label={`Cycle #${o.currentPeriod?.toString() ?? "—"}`}
-          value={next > 0 ? fmtCountdown(remaining) : "—"}
-          sub={ready ? "payday ready" : next > 0 ? "until next payday" : "no schedule set"}
-          highlight={ready}
-        />
+      {/* Stats — three columns, hairline-separated, tabular numbers */}
+      <div className="grid grid-cols-3 divide-x divide-blue-300/40 bg-white">
+        <div className="px-5 py-4">
+          <Stat
+            label="Pool"
+            value={
+              <>
+                {fmtUsdc(o.remainingBalance)}{" "}
+                <span className="text-sm text-neutral-700 font-normal">USDC</span>
+              </>
+            }
+            sub="public"
+          />
+        </div>
+        <div className="px-5 py-4">
+          <Stat label="Team" value={o.payeeCount?.toString() ?? "—"} sub="wallets only" />
+        </div>
+        <div className="px-5 py-4">
+          <Stat
+            label={`Cycle #${o.currentPeriod?.toString() ?? "—"}`}
+            value={next > 0 ? fmtCountdown(remaining) : "—"}
+            sub={ready ? "payday ready" : next > 0 ? "to next payday" : "no schedule"}
+            highlight={ready}
+          />
+        </div>
       </div>
     </section>
   );

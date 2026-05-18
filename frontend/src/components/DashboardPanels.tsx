@@ -55,14 +55,17 @@ export function OverviewPanel() {
   );
 }
 
+/** Schedule now owns the whole "when does payroll run + who can trigger it" story. */
 export function SchedulePanel() {
   return (
     <Panel>
       <PanelHeader
         title="Schedule"
-        sub="When the next payday runs, and how often paydays come around."
+        sub="When the next payday runs, and who's trusted to run it on schedule."
       />
       <PeriodCard />
+      <SubHead title="Auto-runner" sub="A keeper wallet you trust to roll over the cycle on schedule. It can only do that, nothing else." />
+      <KeeperCard />
     </Panel>
   );
 }
@@ -82,17 +85,8 @@ export function AddMemberPanel() {
   );
 }
 
-export function AutomationPanel() {
-  return (
-    <Panel>
-      <PanelHeader
-        title="Automation"
-        sub="Trust a small wallet to roll over paydays on schedule. It can only do that, nothing else."
-      />
-      <KeeperCard />
-    </Panel>
-  );
-}
+// Old hash anchor — falls back to Schedule which now includes the keeper card.
+export const AutomationPanel = SchedulePanel;
 
 export function ClaimPanel() {
   return (

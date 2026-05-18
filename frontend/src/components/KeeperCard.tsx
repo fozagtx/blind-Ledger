@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { isAddress, type Address } from "viem";
 import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { Loader2, ShieldCheck, ShieldX } from "lucide-react";
-import { config } from "../lib/config";
+import { CheckCircle2, Loader2, ShieldCheck, ShieldX } from "lucide-react";
+import { config, gasOverride } from "../lib/config";
 import { payrollPoolAbi } from "../lib/abi";
 import { shortAddr } from "../lib/format";
+import { TxLink } from "./TxLink";
 
 export function KeeperCard() {
   const [input, setInput] = useState("");
@@ -30,6 +31,7 @@ export function KeeperCard() {
         abi: payrollPoolAbi,
         functionName: "setKeeper",
         args: [lookup, allowed],
+        ...gasOverride,
       });
       await refetch();
     } catch { /* surfaced */ }
@@ -94,6 +96,17 @@ export function KeeperCard() {
         </div>
       ) : null}
 
+      {(write.isPending || wait.isLoading) && write.data ? (
+        <div className="mt-2 text-xs text-neutral-700 inline-flex items-center gap-1.5">
+          <Loader2 className="h-3 w-3 animate-spin text-blue-700" />
+          Confirming · <TxLink hash={write.data} />
+        </div>
+      ) : null}
+      {wait.isSuccess ? (
+        <div className="mt-2 text-xs text-success inline-flex items-center gap-1.5 font-semibold">
+          <CheckCircle2 className="h-3 w-3" /> Updated · <TxLink hash={write.data} />
+        </div>
+      ) : null}
       {write.error ? (
         <div className="mt-2 text-xs text-red-500 break-all">
           {(write.error as any)?.shortMessage ?? write.error.message}
